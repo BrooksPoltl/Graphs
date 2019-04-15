@@ -9,12 +9,17 @@ class Graph:
     def add_vertex(self, name):
         if not name in self.vertices:
             self.vertices[name] = set()
-    def add_directed_edge(self,v1, v2):
+    def add_edge(self,v1, v2):
         try:
             self.vertices[v1].add(v2)
             self.vertices[v2].add(v1)
         except:
             return "Missing a vertex"
+    def add_directed_edge(self,v1,v2):
+        try:
+            self.vertices[v1].add(v2)
+        except:
+            return "missing a vertex"
     def breadth_first_traversal(self, start_node):
         queue = [start_node]
         result = []
@@ -49,18 +54,32 @@ class Graph:
                     stack.append(vertice)
         return result
     def breadth_first_search(self, start_node, destination_node):
-        current_node = start_node
         queue = [[start_node]]
         path = []
-        visited = {}
-        while current_node != destination_node:
-            current_node = queue.pop(0)
-            path.append(current_node)
-            for vertice in self.vertices[current_node]:
-                if not vertice in visited:
-                    visited[vertice] = True
-                    queue.append(vertice) 
-        
+        while len(queue) > 0:
+            path = queue.pop(0)
+            prev_node = path[-1]
+            if prev_node == destination_node:
+                return path 
+            for vertice in self.vertices[prev_node]:
+                    new_path = list(path)
+                    new_path.append(vertice)
+                    queue.append(new_path)
+        return 'could not find connection'
+    def depth_first_search(self, start_node, destination_node):   
+        stack = [[start_node]]
+        visited = []
+        while len(stack) >0:
+            path = stack.pop()
+            prev_node = path[-1]
+            if prev_node not in visited:
+                visited.append(prev_node)
+                if prev_node == destination_node:
+                    return path
+                for vertice in self.vertices[prev_node]:
+                    new_path = list(path)
+                    new_path.append(vertice)
+                    stack.append(new_path)
 
 graph = Graph()  # Instantiate your graph
 graph.add_vertex('1')
@@ -80,4 +99,5 @@ graph.add_directed_edge('2', '4')
 graph.add_directed_edge('3', '5')
 graph.add_directed_edge('2', '3')
 graph.add_directed_edge('4', '6')
-print(graph.breadth_first_search('1','2'))
+print(graph.breadth_first_search('1','7'))
+print(graph.depth_first_search('1','7'))
