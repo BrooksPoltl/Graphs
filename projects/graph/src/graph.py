@@ -29,6 +29,38 @@ class Graph:
                     visited[vertice] = True
                     queue.append(vertice) 
         return result
+    def depth_first_traversal_recursively(self, start_node, result = []):
+        result += start_node
+        for neighbor in self.vertices[start_node]:
+            if neighbor not in result:
+                result = self.depth_first_traversal_recursively(neighbor, result)
+        return result
+    def depth_first_traversal_stack(self, start_node):
+        stack = [start_node]
+        result = []
+        visited = {}
+        visited[start_node] = True
+        while len(stack) >0:
+            current_vertex = stack.pop()
+            result.append(current_vertex)
+            for vertice in self.vertices[current_vertex]:
+                if not vertice in visited:
+                    visited[vertice] = True
+                    stack.append(vertice)
+        return result
+    def breadth_first_search(self, start_node, destination_node):
+        current_node = start_node
+        queue = [[start_node]]
+        path = []
+        visited = {}
+        while current_node != destination_node:
+            current_node = queue.pop(0)
+            path.append(current_node)
+            for vertice in self.vertices[current_node]:
+                if not vertice in visited:
+                    visited[vertice] = True
+                    queue.append(vertice) 
+        
 
 graph = Graph()  # Instantiate your graph
 graph.add_vertex('1')
@@ -48,5 +80,4 @@ graph.add_directed_edge('2', '4')
 graph.add_directed_edge('3', '5')
 graph.add_directed_edge('2', '3')
 graph.add_directed_edge('4', '6')
-print(graph.breadth_first_traversal('5'))
-print(graph.vertices)
+print(graph.breadth_first_search('1','2'))
