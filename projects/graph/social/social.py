@@ -31,6 +31,25 @@ class SocialGraph:
         self.users[self.lastID] = User(name)
         self.friendships[self.lastID] = set()
 
+    def quick_populate_graph(self, numusers, avgFriendships):
+        self.lastID = 0
+        self.users = {}
+        self.friendships = {}
+        # !!!! IMPLEMENT ME
+        for i in range(numusers):
+        # Add users
+            name = names.get_full_name()
+            self.addUser(name)
+        number_of_friendships = 0
+        combinations = numusers * avgFriendships
+        while number_of_friendships < combinations:
+                u1 = random.randint(1, numusers)
+                u2 = random.randint(1,numusers)
+                if (u1 in set(self.friendships[u2])) or (u2 in set(self.friendships[u1])):
+                    pass
+                else:
+                    self.addFriendship(u1, u2)
+                    number_of_friendships +=1
     def populateGraph(self, numUsers, avgFriendships):
         """
         Takes a number of users and an average number of friendships
@@ -56,6 +75,7 @@ class SocialGraph:
             for j in range(2,numUsers+1):
                 if i < j:
                     possible_friendships.append([i,j])
+                    print(possible_friendships)
         number_of_friendships = 0
         combinations = numUsers * avgFriendships
         while number_of_friendships < combinations:
@@ -79,7 +99,7 @@ class SocialGraph:
         for i in range(1, len(self.users)+1):
             if i != userID:
                 result[i] = None
-        print(result)
+
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
         for i in range(1, len(self.users)+1):
@@ -88,6 +108,10 @@ class SocialGraph:
             else:
                 path = self.breadth_first_search(userID, i)
                 result[i] = path
+        for i in range(2, len(self.users)+1):
+            if result[i] == -1:
+                print('missing connection')
+        print(result)
         return result
     def breadth_first_search(self, start_node, destination_node):
         queue = [[start_node]]
@@ -105,7 +129,6 @@ class SocialGraph:
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populateGraph(10, 2)
-    print(sg.friendships)
+    sg.quick_populate_graph(1000, 5)
     connections = sg.getAllSocialPaths(1)
-    print(connections)
+  
