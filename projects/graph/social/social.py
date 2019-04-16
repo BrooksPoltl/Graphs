@@ -108,10 +108,6 @@ class SocialGraph:
             else:
                 path = self.breadth_first_search(userID, i)
                 result[i] = path
-        for i in range(2, len(self.users)+1):
-            if result[i] == -1:
-                print('missing connection')
-        print(result)
         return result
     def breadth_first_search(self, start_node, destination_node):
         queue = [[start_node]]
