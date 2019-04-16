@@ -1,5 +1,6 @@
-
-
+import math
+import random
+import names
 class User:
     def __init__(self, name):
         self.name = name
@@ -45,11 +46,26 @@ class SocialGraph:
         self.users = {}
         self.friendships = {}
         # !!!! IMPLEMENT ME
-
+        for i in range(numUsers):
         # Add users
-
+            name = names.get_full_name()
+            self.addUser(name)
         # Create friendships
-
+        possible_friendships = []
+        for i in range(1, numUsers+1):
+            for j in range(2,numUsers+1):
+                if i < j:
+                    possible_friendships.append([i,j])
+        number_of_friendships = 0
+        combinations = numUsers * avgFriendships
+        while number_of_friendships < combinations:
+                random.shuffle(possible_friendships)
+                friendship = possible_friendships[0]
+                if (friendship[0] in set(self.friendships[friendship[1]])) or (friendship[1] in set(self.friendships[friendship[0]])):
+                    pass
+                else:
+                    self.addFriendship(friendship[0], friendship[1])
+                    number_of_friendships +=1
     def getAllSocialPaths(self, userID):
         """
         Takes a user's userID as an argument
@@ -59,10 +75,33 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
+        result = {}
+        for i in range(1, len(self.users)+1):
+            if i != userID:
+                result[i] = None
+        print(result)
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
-        return visited
-
+        for i in range(1, len(self.users)+1):
+            if i == userID:
+                pass
+            else:
+                path = self.breadth_first_search(userID, i)
+                result[i] = path
+        return result
+    def breadth_first_search(self, start_node, destination_node):
+        queue = [[start_node]]
+        path = []
+        while len(queue) > 0:
+            path = queue.pop(0)
+            prev_node = path[-1]
+            if prev_node == destination_node:
+                return path 
+            for vertice in self.friendships[prev_node]:
+                    new_path = list(path)
+                    new_path.append(vertice)
+                    queue.append(new_path)
+        return -1
 
 if __name__ == '__main__':
     sg = SocialGraph()
