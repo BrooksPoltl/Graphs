@@ -3,7 +3,6 @@ from player import Player
 from world import World
 
 import random
-
 # Load world
 world = World()
 
@@ -26,13 +25,64 @@ player = Player("Name", world.startingRoom)
 
 
 # FILL THIS IN
-traversalPath = ['n', 's']
-
-
-
-
-
-
+traversalPath = ['n', 's','e']
+current_graph = {}
+room_graph_items = roomGraph.items()
+for key, value in room_graph_items:
+    current_graph[key] = {}
+    for item in value[1].keys():
+        current_graph[key][item] = False
+def opposite_direction(letter):
+    if letter == 'n':
+        return 's'
+    elif letter == 's':
+        return 'n'
+    elif letter == 'e':
+        return 'w'
+    else: 
+        return 'e'
+def depth_first_traversal_recursively(arr, start_node, result = [[],[]]):
+    result[0].append(start_node)
+    for key, value in arr[start_node][1].items():
+        exits = player.currentRoom.getExits()
+        if value not in result[0]:
+            if len(exits) != 1:
+                player.travel(key)
+                result[1].append(key)
+                opposite = opposite_direction(key)
+                print(opposite, value,start_node)
+                current_graph[start_node][key] = value
+                current_graph[value][opposite] = start_node
+            else:
+                i = len(result[0])-1
+                current = len(result[1])-1
+                while result[0][i] != start_node:
+                    try:
+                        if arr[player.currentRoom.id][1][key] == value:
+                            break
+                        elif arr[player.currentRoom.id][1][key]== result[0][0]:
+                            result[1].append(key)
+                            player.travel(key)
+                            break
+                    except:
+                        pass
+                    player.travel(opposite_direction(result[1][current]))
+                    result[1].append(opposite_direction(result[1][current]))
+                    i = i - 1
+                    current = current -1
+                result[1].append(key)
+                player.travel(key)
+                current_graph[start_node][key] = value
+                current_graph[value][opposite] = start_node
+            result = depth_first_traversal_recursively(arr,value, result)
+        elif len(current_graph) == len(result[0]):
+            player.travel(opposite_direction(key))
+            result[1].append(opposite_direction(key))
+    return result
+traversalPath = depth_first_traversal_recursively(roomGraph, 0)
+traversalPath = traversalPath[1]
+print(current_graph)
+print(traversalPath)
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
